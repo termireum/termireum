@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Termireum — Cybersecurity Researcher & Vulnerability Hunter. Helping secure the web, one vulnerability at a time." />
+  <meta name="keywords" content="cybersecurity, security researcher, bug bounty, vulnerability, penetration testing" />
+  <meta property="og:title" content="Termireum — Cybersecurity Researcher" />
+  <meta property="og:description" content="Helping secure the web, one vulnerability at a time." />
+  <meta property="og:type" content="website" />
+  <title>Termireum — Cybersecurity Researcher</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #060810;
+      --bg2: #0b0f1a;
+      --surface: #0f1524;
+      --border: rgba(0,255,180,0.12);
+      --green: #00ffb4;
+      --green-dim: rgba(0,255,180,0.18);
+      --green-glow: rgba(0,255,180,0.35);
+      --red: #ff3c5a;
+      --white: #e8edf5;
+      --muted: #5a6580;
+      --font-display: 'Syne', sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--green);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s, opacity 0.2s;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--green);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s cubic-bezier(.16,1,.3,1), width 0.2s, height 0.2s;
+      opacity: 0.5;
+    }
+
+    /* Noise grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9000;
+      opacity: 0.4;
+    }
+
+    /* Grid bg */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,255,180,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,180,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, background 0.3s, backdrop-filter 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(6,8,16,0.85);
+      backdrop-filter: blur(20px);
+      border-color: var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      color: var(--green);
+      letter-spacing: 0.05em;
+    }
+    .nav-logo span { color: var(--muted); }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-links a {
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--green); }
+    .nav-cta {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green) !important;
+      border: 1px solid var(--green);
+      padding: 8px 18px;
+      border-radius: 2px;
+      transition: background 0.2s, color 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--green) !important; color: var(--bg) !important; }
+
+    /* HERO */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 5vw;
+      padding-top: 100px;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(0,255,180,0.07) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      animation: pulse-glow 6s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.6; transform: translate(-50%,-50%) scale(1); }
+      50% { opacity: 1; transform: translate(-50%,-50%) scale(1.15); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--green);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+    .hero-badge::before {
+      content: '';
+      display: block;
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--green);
+      animation: blink 1.4s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; } 50% { opacity: 0; }
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      font-weight: 800;
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.4s forwards;
+    }
+    .hero-name .accent { color: var(--green); }
+
+    .hero-desc {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted);
+      font-weight: 300;
+      max-width: 520px;
+      line-height: 1.75;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.6s forwards;
+    }
+    .hero-desc strong { color: var(--white); font-weight: 500; }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.8s forwards;
+    }
+    .btn-primary {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--bg);
+      background: var(--green);
+      padding: 14px 32px;
+      border: none;
+      border-radius: 2px;
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.3s;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.15);
+      transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(.16,1,.3,1);
+    }
+    .btn-primary:hover::after { transform: translateX(0); }
+    .btn-primary:hover { box-shadow: 0 0 40px var(--green-glow); }
+
+    .btn-ghost {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--white);
+      border: 1px solid var(--border);
+      padding: 14px 32px;
+      border-radius: 2px;
+      cursor: none;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .btn-ghost:hover { border-color: var(--green); color: var(--green); }
+
+    .hero-stat-row {
+      position: absolute;
+      bottom: 60px;
+      left: 5vw;
+      right: 5vw;
+      display: flex;
+      gap: 3rem;
+      z-index: 2;
+      opacity: 0;
+      animation: fadeUp 0.9s 1s forwards;
+    }
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1;
+    }
+    .stat-num span { color: var(--green); }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .scroll-line {
+      position: absolute;
+      right: 5vw;
+      bottom: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 2;
+    }
+    .scroll-line span {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      writing-mode: vertical-lr;
+    }
+    .scroll-line::after {
+      content: '';
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--muted), transparent);
+      animation: scrollDown 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollDown {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      51% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SECTION COMMON */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 120px 5vw;
+    }
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--green);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-tag::before {
+      content: '';
+      display: block;
+      width: 30px;
+      height: 1px;
+      background: var(--green);
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.8;
+      max-width: 560px;
+      font-weight: 300;
+    }
+
+    /* ABOUT */
+    #about {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      margin-top: 60px;
+    }
+    .about-text p {
+      color: var(--muted);
+      line-height: 1.85;
+      font-weight: 300;
+      margin-bottom: 1.2rem;
+    }
+    .about-text p strong { color: var(--white); font-weight: 500; }
+    .skills-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 2rem;
+    }
+    .skill-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .skill-item::before {
+      content: '▸';
+      color: var(--green);
+      font-size: 0.7rem;
+    }
+    .terminal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .terminal-header {
+      background: rgba(255,255,255,0.03);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #ff5f56; }
+    .dot.y { background: #ffbd2e; }
+    .dot.g { background: #27c93f; }
+    .terminal-title {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-left: 8px;
+    }
+    .terminal-body {
+      padding: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 2;
+    }
+    .t-prompt { color: var(--green); }
+    .t-cmd { color: var(--white); }
+    .t-comment { color: var(--muted); }
+    .t-value { color: #7dd3fc; }
+    .t-string { color: #fbbf24; }
+    .t-cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: var(--green);
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+
+    /* SECURED */
+    #secured {
+      overflow: hidden;
+    }
+    .secured-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 2rem;
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+    }
+    .logos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .logo-card {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      cursor: none;
+      text-decoration: none;
+    }
+    .logo-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--green-dim);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .logo-card:hover {
+      border-color: var(--green);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 40px rgba(0,255,180,0.1);
+    }
+    .logo-card:hover::before { opacity: 1; }
+    .logo-icon {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .logo-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 4px;
+    }
+    .logo-info { position: relative; z-index: 1; }
+    .logo-name {
+      font-family: var(--font-display);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .logo-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--green);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .vuln-badge {
+      position: absolute;
+      top: 10px; right: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--green);
+      border: 1px solid var(--green-dim);
+      padding: 2px 6px;
+      border-radius: 2px;
+      letter-spacing: 0.08em;
+    }
+    .more-card {
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* SERVICES */
+    #services {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 60px;
+    }
+    .service-card {
+      padding: 40px 32px;
+      background: var(--surface);
+      position: relative;
+      transition: background 0.3s;
+    }
+    .service-card:hover { background: rgba(0,255,180,0.04); }
+    .service-num {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--green);
+      letter-spacing: 0.15em;
+      margin-bottom: 1.5rem;
+    }
+    .service-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .service-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+    .service-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    /* CONTACT */
+    #contact {
+      overflow: hidden;
+    }
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+      margin-top: 60px;
+    }
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 2rem;
+    }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      padding: 20px 24px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .contact-link:hover {
+      border-color: var(--green);
+      transform: translateX(6px);
+    }
+    .contact-link-icon {
+      width: 44px; height: 44px;
+      border-radius: 8px;
+      background: var(--green-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .contact-link-text .label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .contact-link-text .handle {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .contact-info {
+      margin-top: 2rem;
+    }
+    .contact-info p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+    .contact-info p strong { color: var(--green); font-weight: 500; }
+    .cta-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-block::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(0,255,180,0.12) 0%, transparent 70%);
+    }
+    .cta-block h3 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .cta-block p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      font-weight: 300;
+      position: relative;
+    }
+    .cta-block .btn-primary { position: relative; display: inline-block; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+    .footer-logo {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--green);
+    }
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .footer-links a {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--green); }
+
+    /* DIVIDER LINE */
+    .divider-line {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--green), transparent);
+      opacity: 0.2;
+      margin: 0;
+    }
+
+    /* REVEAL ANIMATIONS */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s cubic-bezier(.16,1,.3,1), transform 0.8s cubic-bezier(.16,1,.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* MARQUEE */
+    .marquee-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+      background: var(--surface);
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      white-space: nowrap;
+      animation: marquee 28s linear infinite;
+    }
+    .marquee-item {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+    .marquee-item::after {
+      content: '◆';
+      color: var(--green);
+      font-size: 0.4rem;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .about-grid, .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+      .nav-links { display: none; }
+      .hero-stat-row { gap: 1.5rem; flex-wrap: wrap; }
+      .logos-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+    }
+    @media (max-width: 600px) {
+      section { padding: 80px 5vw; }
+      .scroll-line { display: none; }
+      .hero-stat-row { bottom: 32px; }
+      .services-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px; height: 1.5px;
+      background: var(--white);
+      transition: 0.3s;
+    }
+    @media (max-width: 900px) {
+      .hamburger { display: flex; }
+    }
+
+    /* Mobile menu */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(6,8,16,0.97);
+      z-index: 90;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--white);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--green); }
+    .mobile-close {
+      position: absolute;
+      top: 24px; right: 5vw;
+      font-size: 2rem;
+      color: var(--muted);
+      cursor: none;
+      background: none;
+      border: none;
+      font-family: var(--font-display);
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">TERM<span>//</span>IREUM</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#secured">Hall of Fame</a>
+    <a href="#services">Services</a>
+    <a href="#contact" class="nav-cta">Hire Me</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">✕</button>
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#secured" onclick="closeMobile()">Hall of Fame</a>
+  <a href="#services" onclick="closeMobile()">Services</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">Security Researcher &amp; Vulnerability Hunter</div>
+
+    <h1 class="hero-name">
+      TERM<span class="accent">I</span><br/>REUM
+    </h1>
+
+    <p class="hero-desc">
+      Finding what others miss. I specialize in <strong>identifying and reporting critical vulnerabilities</strong> across web applications, DeFi protocols, and enterprise platforms — making the internet safer for everyone.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Work With Me</a>
+      <a href="#secured" class="btn-ghost">Hall of Fame →</a>
+    </div>
+  </div>
+
+  <div class="hero-stat-row">
+    <div class="stat">
+      <div class="stat-num">15<span>+</span></div>
+      <div class="stat-label">Companies Secured</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">CVEs & Reports</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100<span>%</span></div>
+      <div class="stat-label">Responsible Disclosure</div>
+    </div>
+  </div>
+
+  <div class="scroll-line"><span>scroll</span></div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item">Web App Security</div>
+    <div class="marquee-item">Smart Contract Auditing</div>
+    <div class="marquee-item">Penetration Testing</div>
+    <div class="marquee-item">Bug Bounty</div>
+    <div class="marquee-item">Responsible Disclosure</div>
+    <div class="marquee-item">DeFi Protocol Security</div>
+    <div class="marquee-item">API Security</div>
+    <div class="marquee-item">Authentication Flaws</div>
+    <!-- duplicate for infinite -->
+    <div class="marquee-item">Web App Security</div>
+    <div class="marquee-item">Smart Contract Auditing</div>
+    <div class="marquee-item">Penetration Testing</div>
+    <div class="marquee-item">Bug Bounty</div>
+    <div class="marquee-item">Responsible Disclosure</div>
+    <div class="marquee-item">DeFi Protocol Security</div>
+    <div class="marquee-item">API Security</div>
+    <div class="marquee-item">Authentication Flaws</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-tag">Who I Am</div>
+  <h2 class="section-title">Cybersecurity<br/>Researcher</h2>
+
+  <div class="about-grid reveal">
+    <div class="about-text">
+      <p>I'm <strong>Termireum</strong>, an independent cybersecurity researcher with a focus on identifying and responsibly disclosing security vulnerabilities in web applications, blockchain protocols, and enterprise systems.</p>
+      <p>My methodology combines manual testing with advanced tooling to discover vulnerabilities that automated scanners miss — from subtle logic flaws to critical authentication bypasses.</p>
+      <p>Every vulnerability I find is reported through proper channels, giving companies the opportunity to patch before bad actors can exploit. <strong>Security through responsible disclosure.</strong></p>
+
+      <div class="skills-list">
+        <div class="skill-item">Vulnerability Research</div>
+        <div class="skill-item">Web App Pentesting</div>
+        <div class="skill-item">DeFi / Web3 Security</div>
+        <div class="skill-item">API Security Testing</div>
+        <div class="skill-item">Bug Bounty Programs</div>
+        <div class="skill-item">Security Reporting</div>
+      </div>
+    </div>
+
+    <div class="terminal-card">
+      <div class="terminal-header">
+        <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+        <span class="terminal-title">termireum@kali — ~/recon</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="t-prompt">$ </span><span class="t-cmd">whoami</span></div>
+        <div><span class="t-value">termireum</span> <span class="t-comment">// security researcher</span></div>
+        <br/>
+        <div><span class="t-prompt">$ </span><span class="t-cmd">cat profile.json</span></div>
+        <div>{</div>
+        <div>&nbsp;&nbsp;<span class="t-value">"role"</span>: <span class="t-string">"Vulnerability Researcher"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="t-value">"focus"</span>: <span class="t-string">"Web & Web3 Security"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="t-value">"targets"</span>: <span class="t-string">"15+ companies"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="t-value">"method"</span>: <span class="t-string">"Responsible Disclosure"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="t-value">"status"</span>: <span class="t-value">"available</span><span class="t-comment"> for hire</span><span class="t-value">"</span></div>
+        <div>}</div>
+        <br/>
+        <div><span class="t-prompt">$ </span><span class="t-cmd">./scan --target $your_website</span><span class="t-cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURED HALL OF FAME -->
+<section id="secured">
+  <div class="secured-header">
+    <div>
+      <div class="section-tag">Hall of Fame</div>
+      <h2 class="section-title">Companies<br/>I've Helped Secure</h2>
+    </div>
+    <p class="section-sub">These organizations trusted me to identify and report security vulnerabilities through responsible disclosure programs.</p>
+  </div>
+
+  <div class="logos-grid reveal">
+
+    <!-- bol.com -->
+    <a href="https://bol.com" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=bol.com&sz=64" alt="bol.com" onerror="this.parentElement.textContent='🛒'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">bol.com</div>
+        <div class="logo-tag">E-Commerce</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- flare.network -->
+    <a href="https://flare.network" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=flare.network&sz=64" alt="flare.network" onerror="this.parentElement.textContent='🔥'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">Flare Network</div>
+        <div class="logo-tag">Blockchain</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- houdiniswap -->
+    <a href="https://houdiniswap.com" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=houdiniswap.com&sz=64" alt="HoudiniSwap" onerror="this.parentElement.textContent='🔄'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">HoudiniSwap</div>
+        <div class="logo-tag">DeFi</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- keplr.app -->
+    <a href="https://keplr.app" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=keplr.app&sz=64" alt="Keplr" onerror="this.parentElement.textContent='🔐'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">Keplr</div>
+        <div class="logo-tag">Crypto Wallet</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- subwallet.app -->
+    <a href="https://subwallet.app" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=subwallet.app&sz=64" alt="SubWallet" onerror="this.parentElement.textContent='💼'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">SubWallet</div>
+        <div class="logo-tag">Crypto Wallet</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- xlsmart/xlaxiata -->
+    <a href="https://xlaxiata.co.id" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=xlaxiata.co.id&sz=64" alt="XL Axiata" onerror="this.parentElement.textContent='📡'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">XL Axiata</div>
+        <div class="logo-tag">Telecom</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- covalenthq.com -->
+    <a href="https://covalenthq.com" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=covalenthq.com&sz=64" alt="Covalent" onerror="this.parentElement.textContent='⛓️'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">Covalent HQ</div>
+        <div class="logo-tag">Blockchain Data</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- coinstore.com -->
+    <a href="https://coinstore.com" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=coinstore.com&sz=64" alt="CoinStore" onerror="this.parentElement.textContent='💱'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">CoinStore</div>
+        <div class="logo-tag">Crypto Exchange</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- zircuit.com -->
+    <a href="https://zircuit.com" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=zircuit.com&sz=64" alt="Zircuit" onerror="this.parentElement.textContent='⚡'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">Zircuit</div>
+        <div class="logo-tag">ZK Rollup</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- careevolution.com -->
+    <a href="https://careevolution.com" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=careevolution.com&sz=64" alt="CareEvolution" onerror="this.parentElement.textContent='🏥'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">CareEvolution</div>
+        <div class="logo-tag">Health Tech</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- collibra.com -->
+    <a href="https://collibra.com" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=collibra.com&sz=64" alt="Collibra" onerror="this.parentElement.textContent='📊'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">Collibra</div>
+        <div class="logo-tag">Data Governance</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- fishingfrenzy.co -->
+    <a href="https://fishingfrenzy.co" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=fishingfrenzy.co&sz=64" alt="FishingFrenzy" onerror="this.parentElement.textContent='🎮'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">FishingFrenzy</div>
+        <div class="logo-tag">Web3 Game</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- outcome.market -->
+    <a href="https://outcome.market" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=outcome.market&sz=64" alt="Outcome" onerror="this.parentElement.textContent='📈'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">Outcome.market</div>
+        <div class="logo-tag">Prediction Market</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- bullet.xyz -->
+    <a href="https://bullet.xyz" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=bullet.xyz&sz=64" alt="Bullet" onerror="this.parentElement.textContent='🎯'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">Bullet</div>
+        <div class="logo-tag">Web3</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- syncvault.com -->
+    <a href="https://syncvault.com" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=syncvault.com&sz=64" alt="SyncVault" onerror="this.parentElement.textContent='🔒'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">SyncVault</div>
+        <div class="logo-tag">Storage</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <!-- hackenproof.com -->
+    <a href="https://hackenproof.com" target="_blank" rel="noopener" class="logo-card">
+      <div class="logo-icon">
+        <img src="https://www.google.com/s2/favicons?domain=hackenproof.com&sz=64" alt="HackenProof" onerror="this.parentElement.textContent='🛡️'">
+      </div>
+      <div class="logo-info">
+        <div class="logo-name">HackenProof</div>
+        <div class="logo-tag">Bug Bounty</div>
+      </div>
+      <span class="vuln-badge">SECURED</span>
+    </a>
+
+    <div class="more-card">+ and many more...</div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-tag">What I Do</div>
+  <h2 class="section-title">Services</h2>
+  <p class="section-sub">Open to engagements for organizations that want to stay one step ahead of attackers.</p>
+
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <div class="service-icon">🌐</div>
+      <div class="service-title">Web Application Testing</div>
+      <p class="service-desc">Manual and automated security testing of web applications to uncover OWASP Top 10 and beyond — SQLi, XSS, IDOR, SSRF, authentication flaws, and business logic vulnerabilities.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <div class="service-icon">⛓️</div>
+      <div class="service-title">Web3 & DeFi Security</div>
+      <p class="service-desc">Security review of decentralized applications, smart contracts, and blockchain protocol interfaces. Finding vulnerabilities before they become exploits costing millions.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <div class="service-icon">🔌</div>
+      <div class="service-title">API Security Review</div>
+      <p class="service-desc">Deep-dive testing of REST and GraphQL APIs for broken authentication, excessive data exposure, rate limiting issues, and injection vulnerabilities.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <div class="service-icon">📋</div>
+      <div class="service-title">Security Report Writing</div>
+      <p class="service-desc">Clear, actionable vulnerability reports with CVSS scoring, proof-of-concept steps, and prioritized remediation guidance — ready for your engineering team.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-tag">Get In Touch</div>
+  <h2 class="section-title">Let's Work<br/>Together</h2>
+
+  <div class="contact-inner reveal">
+    <div>
+      <div class="contact-info">
+        <p>I'm currently accepting engagements. Whether you need a one-time security review or an ongoing bug bounty partnership, reach out and let's talk about securing your platform.</p>
+        <p style="margin-top:1rem;">Response time: <strong>within 24 hours.</strong></p>
+      </div>
+
+      <div class="contact-links">
+        <a href="https://twitter.com/termireum" target="_blank" rel="noopener" class="contact-link">
+          <div class="contact-link-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ffb4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+            </svg>
+          </div>
+          <div class="contact-link-text">
+            <div class="label">Twitter / X</div>
+            <div class="handle">@termireum</div>
+          </div>
+        </a>
+
+        <a href="https://t.me/termireum" target="_blank" rel="noopener" class="contact-link">
+          <div class="contact-link-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00ffb4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </div>
+          <div class="contact-link-text">
+            <div class="label">Telegram</div>
+            <div class="handle">@termireum</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="cta-block">
+      <h3>Ready to secure<br/>your platform?</h3>
+      <p>I offer thorough, professional security testing with detailed reports and direct communication throughout the engagement. Your security is my priority.</p>
+      <a href="https://t.me/termireum" target="_blank" rel="noopener" class="btn-primary">Send a Message</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider-line"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">TERM//IREUM</div>
+  <div class="footer-copy">© 2025 Termireum. All vulnerabilities disclosed responsibly.</div>
+  <div class="footer-links">
+    <a href="https://twitter.com/termireum" target="_blank" rel="noopener">Twitter</a>
+    <a href="https://t.me/termireum" target="_blank" rel="noopener">Telegram</a>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .logo-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '56px';
+      ring.style.height = '56px';
+      cursor.style.opacity = '0.5';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+      cursor.style.opacity = '1';
+    });
+  });
+
+  // Hide cursor on mobile
+  if ('ontouchstart' in window) {
+    cursor.style.display = 'none';
+    ring.style.display = 'none';
+    document.body.style.cursor = 'auto';
+    document.querySelectorAll('*').forEach(el => el.style.cursor = '');
+  }
+
+  // Nav scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+  reveals.forEach(r => observer.observe(r));
+
+  // Mobile menu
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('mobileMenu').classList.add('open');
+  });
+  document.getElementById('mobileClose').addEventListener('click', closeMobile);
+  function closeMobile() {
+    document.getElementById('mobileMenu').classList.remove('open');
+  }
+</script>
+</body>
+</html>
