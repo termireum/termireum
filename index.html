@@ -3,809 +3,875 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Termireum — Penetration Tester & Security Researcher</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    
+
+    :root {
+      --bg:       #080c1a;
+      --surface:  #0f1629;
+      --card:     #131c33;
+      --border:   rgba(239,68,68,0.15);
+      --red:      #ef4444;
+      --red-dark: #b91c1c;
+      --red-glow: rgba(239,68,68,0.25);
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --mono:     'JetBrains Mono', monospace;
+    }
+
     body {
-      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
-      background: #0a0e27;
-      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
       line-height: 1.6;
       overflow-x: hidden;
     }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-    
-    /* Navigation */
+
+    /* ─── NAV ─────────────────────────────────── */
     .nav {
-      position: sticky;
-      top: 0;
-      background: rgba(10, 14, 39, 0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(220, 38, 38, 0.1);
-      z-index: 1000;
-      padding: 1rem 0;
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,12,26,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 0;
     }
-    
-    .nav-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .nav-inner {
+      max-width: 1180px; margin: 0 auto; padding: 0 2rem;
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem;
     }
-    
     .nav-brand {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #ef4444;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      font-family: var(--mono);
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--red); text-decoration: none;
+      display: flex; align-items: center; gap: 0.5rem;
     }
-    
-    .nav-brand i { font-size: 1.5rem; }
-    
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-    }
-    
+    .nav-links { display: flex; align-items: center; gap: 1.8rem; flex-wrap: wrap; }
     .nav-link {
-      color: #cbd5e1;
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: all 0.3s ease;
+      color: var(--muted); text-decoration: none;
+      font-size: 0.88rem; font-weight: 500;
+      transition: color 0.2s;
     }
-    
-    .nav-link:hover { color: #ef4444; }
-    
-    /* Hero Section */
+    .nav-link:hover { color: var(--text); }
+
+    /* Lang Toggle */
+    .lang-toggle {
+      display: flex; gap: 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+    }
+    .lang-btn {
+      padding: 0.35rem 0.8rem; font-size: 0.8rem; font-weight: 600;
+      background: transparent; border: none; color: var(--muted); cursor: pointer;
+      transition: all 0.2s; font-family: 'Inter', sans-serif;
+    }
+    .lang-btn.active { background: var(--red); color: #fff; }
+
+    /* ─── HERO ────────────────────────────────── */
     .hero {
-      padding: 6rem 0 4rem;
-      position: relative;
-      overflow: hidden;
+      padding: 7rem 0 4rem;
+      position: relative; overflow: hidden;
     }
-    
     .hero::before {
       content: '';
-      position: absolute;
-      top: 0;
-      right: -20%;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(220, 38, 38, 0.15), transparent);
-      border-radius: 50%;
+      position: absolute; top: -100px; right: -150px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(239,68,68,0.12), transparent 70%);
+      border-radius: 50%; pointer-events: none;
     }
-    
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: center;
+    .hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: -100px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(239,68,68,0.06), transparent 70%);
+      border-radius: 50%; pointer-events: none;
     }
-    
-    .hero-text h1 {
-      font-size: 3.5rem;
-      font-weight: 800;
-      line-height: 1.1;
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 2rem; }
+
+    /* Social proof banner */
+    .proof-banner {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 100px; padding: 0.4rem 1rem;
+      font-size: 0.82rem; font-weight: 600; color: #fca5a5;
+      margin-bottom: 1.8rem;
+    }
+    .proof-banner .dot {
+      width: 7px; height: 7px; background: var(--red);
+      border-radius: 50%; animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.5; transform:scale(1.5); }
+    }
+
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr 420px; gap: 4rem; align-items: center;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono); font-size: 0.78rem; font-weight: 500;
+      color: var(--red); letter-spacing: 0.12em; text-transform: uppercase;
       margin-bottom: 1rem;
-      color: #f1f5f9;
     }
-    
-    .hero-text h1 .highlight {
-      color: #ef4444;
-      text-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+    h1 {
+      font-size: 3.8rem; font-weight: 900; line-height: 1.05;
+      color: #f8fafc; margin-bottom: 1.4rem; letter-spacing: -0.02em;
     }
-    
-    .hero-text .subtitle {
-      font-size: 1.2rem;
-      color: #cbd5e1;
-      margin-bottom: 1.5rem;
-      line-height: 1.8;
+    h1 .hl { color: var(--red); }
+    .hero-sub {
+      font-size: 1.1rem; color: var(--muted); max-width: 520px;
+      line-height: 1.8; margin-bottom: 2rem;
     }
-    
-    .hero-ctas {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
     .btn {
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 1.8rem; border-radius: 8px; font-size: 0.95rem;
+      font-weight: 600; text-decoration: none; border: none; cursor: pointer;
+      transition: all 0.25s; font-family: 'Inter', sans-serif;
     }
-    
     .btn-primary {
-      background: #ef4444;
-      color: white;
-      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+      background: var(--red); color: #fff;
+      box-shadow: 0 4px 20px var(--red-glow);
     }
-    
-    .btn-primary:hover {
-      background: #dc2626;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(239, 68, 68, 0.4);
+    .btn-primary:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 8px 28px var(--red-glow); }
+    .btn-outline {
+      background: transparent; color: var(--text);
+      border: 1.5px solid rgba(239,68,68,0.4);
     }
-    
-    .btn-secondary {
-      background: transparent;
-      color: #f1f5f9;
-      border: 2px solid #ef4444;
+    .btn-outline:hover { border-color: var(--red); background: rgba(239,68,68,0.08); transform: translateY(-2px); }
+
+    /* Hero right: reward card */
+    .reward-card {
+      background: var(--card);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 16px; padding: 2rem;
+      position: relative; overflow: hidden;
     }
-    
-    .btn-secondary:hover {
-      background: rgba(239, 68, 68, 0.1);
-      transform: translateY(-2px);
+    .reward-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--red), #f97316);
     }
-    
-    .hero-visual {
-      position: relative;
-      height: 400px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .reward-label {
+      font-family: var(--mono); font-size: 0.72rem;
+      color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 0.4rem;
     }
-    
-    .avatar-large {
-      width: 200px;
-      height: 200px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 80px;
-      box-shadow: 0 20px 60px rgba(239, 68, 68, 0.3);
-      transform: rotate(5deg);
-      transition: all 0.3s ease;
-    }
-    
-    .avatar-large:hover {
-      transform: rotate(0deg) scale(1.05);
-    }
-    
-    /* Metrics */
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2rem;
-      margin-top: 3rem;
-      padding: 2rem;
-      background: rgba(30, 41, 59, 0.5);
-      border: 1px solid rgba(220, 38, 38, 0.2);
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-    }
-    
-    .metric {
-      text-align: center;
-    }
-    
-    .metric-value {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: #ef4444;
+    .reward-amount {
+      font-size: 2.6rem; font-weight: 900; color: var(--red);
+      letter-spacing: -0.02em; line-height: 1;
       margin-bottom: 0.5rem;
     }
-    
-    .metric-label {
-      font-size: 0.9rem;
-      color: #cbd5e1;
+    .reward-from {
+      font-size: 0.88rem; color: var(--muted); margin-bottom: 1.5rem;
     }
-    
-    /* Section */
-    .section {
-      padding: 5rem 0;
-      border-top: 1px solid rgba(220, 38, 38, 0.1);
+    .reward-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .tag {
+      font-size: 0.75rem; font-weight: 600; padding: 0.3rem 0.7rem;
+      border-radius: 4px; font-family: var(--mono);
     }
-    
-    .section-title {
-      font-size: 2.5rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      color: #f1f5f9;
+    .tag-critical { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+    .tag-high     { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+    .tag-program  { background: rgba(148,163,184,0.1); color: var(--muted); border: 1px solid rgba(148,163,184,0.2); }
+    .reward-divider { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
+    .reward-note {
+      font-size: 0.8rem; color: var(--muted); line-height: 1.6;
+      font-style: italic;
     }
-    
-    .section-title .highlight {
-      color: #ef4444;
-    }
-    
-    .section-desc {
-      font-size: 1.1rem;
-      color: #cbd5e1;
-      margin-bottom: 3rem;
-      max-width: 600px;
-    }
-    
-    /* Proof of Work Section */
-    .pow-filters {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    
-    .filter-btn {
-      padding: 0.6rem 1.2rem;
-      background: rgba(30, 41, 59, 0.5);
-      border: 1px solid rgba(220, 38, 38, 0.2);
-      color: #cbd5e1;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: all 0.3s ease;
-    }
-    
-    .filter-btn:hover {
-      background: rgba(239, 68, 68, 0.2);
-      border-color: rgba(239, 68, 68, 0.4);
-    }
-    
-    .filter-btn.active {
-      background: #ef4444;
-      color: white;
-      border-color: #ef4444;
-    }
-    
-    .pow-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-    
-    .pow-card {
-      background: rgba(30, 41, 59, 0.5);
-      border: 1px solid rgba(220, 38, 38, 0.2);
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: all 0.3s ease;
-      position: relative;
+
+    /* ─── METRICS BAR ─────────────────────────── */
+    .metrics-bar {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0; margin-top: 4rem;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
       overflow: hidden;
     }
-    
-    .pow-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #ef4444, #991b1b);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s ease;
+    .metric {
+      padding: 1.8rem; text-align: center;
+      border-right: 1px solid var(--border);
     }
-    
-    .pow-card:hover {
-      border-color: rgba(239, 68, 68, 0.4);
-      background: rgba(30, 41, 59, 0.8);
-      transform: translateY(-6px);
-      box-shadow: 0 12px 40px rgba(239, 68, 68, 0.2);
+    .metric:last-child { border-right: none; }
+    .metric-value {
+      font-size: 2rem; font-weight: 900; color: var(--red);
+      line-height: 1; margin-bottom: 0.4rem; font-variant-numeric: tabular-nums;
     }
-    
-    .pow-card:hover::before { transform: scaleX(1); }
-    
-    .pow-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 1rem;
+    .metric-label { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+
+    /* ─── SECTION ─────────────────────────────── */
+    .section { padding: 6rem 0; }
+    .section + .section { border-top: 1px solid var(--border); }
+    .section-eyebrow {
+      font-family: var(--mono); font-size: 0.72rem; font-weight: 500;
+      color: var(--red); letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 0.8rem;
     }
-    
-    .pow-id {
-      font-size: 0.8rem;
-      color: #94a3b8;
-      font-family: monospace;
-      background: rgba(220, 38, 38, 0.1);
-      padding: 0.3rem 0.6rem;
-      border-radius: 4px;
+    .section-title {
+      font-size: 2.4rem; font-weight: 800; line-height: 1.15;
+      color: #f8fafc; margin-bottom: 1rem; letter-spacing: -0.02em;
     }
-    
-    .severity-badge {
-      display: inline-block;
-      padding: 0.4rem 0.8rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    .severity-critical {
-      background: rgba(220, 38, 38, 0.2);
-      color: #fca5a5;
-      border: 1px solid rgba(220, 38, 38, 0.4);
-    }
-    
-    .severity-high {
-      background: rgba(245, 158, 11, 0.2);
-      color: #fcd34d;
-      border: 1px solid rgba(245, 158, 11, 0.4);
-    }
-    
-    .severity-medium {
-      background: rgba(59, 130, 246, 0.2);
-      color: #93c5fd;
-      border: 1px solid rgba(59, 130, 246, 0.4);
-    }
-    
-    .pow-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      color: #f1f5f9;
-    }
-    
-    .pow-category {
-      display: inline-block;
-      background: rgba(239, 68, 68, 0.1);
-      color: #fca5a5;
-      padding: 0.3rem 0.7rem;
-      border-radius: 3px;
-      font-size: 0.8rem;
-      margin-bottom: 1rem;
-    }
-    
-    .pow-desc {
-      color: #cbd5e1;
-      font-size: 0.9rem;
-      line-height: 1.6;
-      margin-bottom: 1rem;
-    }
-    
-    .pow-meta {
-      display: flex;
-      gap: 1rem;
-      font-size: 0.85rem;
-      color: #94a3b8;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(220, 38, 38, 0.1);
-    }
-    
-    .pow-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    
-    /* Services Section */
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-    
+    .section-title .hl { color: var(--red); }
+    .section-desc { font-size: 1rem; color: var(--muted); max-width: 600px; line-height: 1.8; margin-bottom: 3rem; }
+
+    /* ─── SERVICES ────────────────────────────── */
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
     .service-card {
-      background: rgba(30, 41, 59, 0.5);
-      border: 1px solid rgba(220, 38, 38, 0.2);
-      border-radius: 12px;
-      padding: 2rem;
-      transition: all 0.3s ease;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.8rem;
+      transition: all 0.25s; position: relative; overflow: hidden;
     }
-    
     .service-card:hover {
-      border-color: rgba(239, 68, 68, 0.4);
-      background: rgba(30, 41, 59, 0.8);
-      transform: translateY(-8px);
-      box-shadow: 0 12px 40px rgba(239, 68, 68, 0.2);
+      border-color: rgba(239,68,68,0.35);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 36px rgba(239,68,68,0.12);
     }
-    
     .service-icon {
-      font-size: 2.5rem;
-      color: #ef4444;
-      margin-bottom: 1rem;
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(239,68,68,0.12); display: flex; align-items: center;
+      justify-content: center; font-size: 1.4rem; color: var(--red);
+      margin-bottom: 1.2rem;
     }
-    
-    .service-title {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: #f1f5f9;
+    .service-title { font-size: 1rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.6rem; }
+    .service-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+
+    /* ─── POW / WRITEUPS ──────────────────────── */
+    .pow-filters { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .filter-btn {
+      padding: 0.5rem 1.1rem; border-radius: 100px;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
     }
-    
-    .service-desc {
-      color: #cbd5e1;
-      font-size: 0.95rem;
-      line-height: 1.8;
+    .filter-btn:hover { border-color: rgba(239,68,68,0.4); color: var(--text); }
+    .filter-btn.active { background: var(--red); color: #fff; border-color: var(--red); }
+
+    .pow-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+    .pow-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.6rem;
+      transition: all 0.25s; position: relative; overflow: hidden;
+      cursor: default;
     }
-    
-    /* CTA Section */
+    .pow-card::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--red), transparent);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.3s;
+    }
+    .pow-card:hover { border-color: rgba(239,68,68,0.3); transform: translateY(-4px); box-shadow: 0 8px 28px rgba(239,68,68,0.1); }
+    .pow-card:hover::after { transform: scaleX(1); }
+
+    .pow-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; gap: 0.5rem; }
+    .pow-id { font-family: var(--mono); font-size: 0.73rem; color: var(--muted); }
+    .sev-badge {
+      font-family: var(--mono); font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      padding: 0.25rem 0.6rem; border-radius: 4px;
+    }
+    .sev-critical { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+    .sev-high     { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+
+    .pow-title { font-size: 1rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem; line-height: 1.4; }
+    .pow-cat {
+      display: inline-block; font-size: 0.72rem; font-weight: 600;
+      font-family: var(--mono); color: #fca5a5;
+      background: rgba(239,68,68,0.08); padding: 0.2rem 0.6rem;
+      border-radius: 3px; margin-bottom: 0.8rem;
+    }
+    .pow-desc { font-size: 0.87rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.2rem; }
+    .pow-footer {
+      padding-top: 1rem; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.8rem; color: var(--muted); gap: 0.5rem; flex-wrap: wrap;
+    }
+    .pow-target {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-family: var(--mono); font-size: 0.74rem;
+    }
+    .redacted {
+      background: #1e293b; color: #1e293b;
+      border-radius: 3px; padding: 0 0.4rem;
+      user-select: none; font-size: 0.7rem;
+      letter-spacing: 0.1em; cursor: not-allowed;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .redacted:hover { background: rgba(239,68,68,0.2); color: #fca5a5; }
+    .redacted::after {
+      content: 'Confidential';
+      position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+      background: #1e293b; color: var(--muted); font-size: 0.65rem;
+      padding: 0.2rem 0.5rem; border-radius: 4px; white-space: nowrap;
+      opacity: 0; transition: opacity 0.2s; pointer-events: none;
+    }
+    .redacted:hover::after { opacity: 1; }
+
+    .blog-badge {
+      font-size: 0.72rem; font-weight: 600;
+      display: flex; align-items: center; gap: 0.3rem;
+      color: var(--muted);
+    }
+    .blog-badge.coming { color: #64748b; font-style: italic; }
+
+    /* ─── SOCIAL PROOF ────────────────────────── */
+    .proof-section {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 3rem;
+    }
+    .proof-logos {
+      display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .proof-logo {
+      font-family: var(--mono); font-size: 0.9rem; font-weight: 700;
+      color: var(--muted); padding: 0.6rem 1.2rem;
+      border: 1px solid var(--border); border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .proof-logo:hover { color: var(--text); border-color: rgba(239,68,68,0.3); }
+    .proof-quote {
+      font-size: 1.3rem; font-weight: 700; color: var(--text);
+      line-height: 1.6; max-width: 700px; margin: 2rem 0 1rem;
+    }
+    .proof-quote .hl { color: var(--red); }
+
+    /* ─── CTA ─────────────────────────────────── */
     .cta-section {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(153, 27, 27, 0.1));
-      border: 2px solid rgba(239, 68, 68, 0.3);
-      border-radius: 16px;
-      padding: 3rem;
-      text-align: center;
-      margin: 4rem 0;
+      background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(153,27,27,0.05));
+      border: 1px solid rgba(239,68,68,0.25); border-radius: 16px;
+      padding: 4rem; text-align: center; margin: 4rem 0;
+      position: relative; overflow: hidden;
     }
-    
+    .cta-section::before {
+      content: ''; position: absolute;
+      top: -60px; left: 50%; transform: translateX(-50%);
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(239,68,68,0.1), transparent 70%);
+      pointer-events: none;
+    }
     .cta-section h2 {
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      color: #f1f5f9;
+      font-size: 2.2rem; font-weight: 800; color: #f8fafc;
+      margin-bottom: 1rem; letter-spacing: -0.02em;
+      position: relative;
     }
-    
-    .cta-section p {
-      font-size: 1.1rem;
-      color: #cbd5e1;
-      margin-bottom: 2rem;
-    }
-    
-    /* Social Links */
-    .social-links {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-    }
-    
+    .cta-section p { font-size: 1rem; color: var(--muted); max-width: 500px; margin: 0 auto 2rem; line-height: 1.8; }
+    .social-links { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem; }
     .social-link {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: rgba(30, 41, 59, 0.8);
-      border: 1px solid rgba(220, 38, 38, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #cbd5e1;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      font-size: 1.3rem;
+      width: 46px; height: 46px; border-radius: 50%;
+      background: var(--card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); text-decoration: none; font-size: 1.2rem;
+      transition: all 0.25s;
     }
-    
-    .social-link:hover {
-      background: #ef4444;
-      color: white;
-      border-color: #ef4444;
-      transform: translateY(-4px);
-    }
-    
-    /* Footer */
+    .social-link:hover { background: var(--red); color: #fff; border-color: var(--red); transform: translateY(-3px); }
+
+    /* ─── FOOTER ──────────────────────────────── */
     .footer {
-      border-top: 1px solid rgba(220, 38, 38, 0.1);
-      padding: 2rem 0;
-      text-align: center;
-      color: #94a3b8;
-      font-size: 0.9rem;
+      border-top: 1px solid var(--border); padding: 2rem 0;
+      text-align: center; color: var(--muted); font-size: 0.82rem;
+      font-family: var(--mono);
     }
-    
-    /* Responsive */
+
+    /* ─── RESPONSIVE ──────────────────────────── */
     @media (max-width: 1024px) {
-      .hero-content { grid-template-columns: 1fr; }
-      .metrics { grid-template-columns: repeat(2, 1fr); }
-      .services-grid { grid-template-columns: 1fr; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .reward-card { max-width: 460px; }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .metrics-bar { grid-template-columns: repeat(2, 1fr); }
+      .metric { border-right: none; border-bottom: 1px solid var(--border); }
+      .metric:nth-child(2) { border-right: none; }
     }
-    
     @media (max-width: 768px) {
-      .hero-text h1 { font-size: 2.5rem; }
-      .section-title { font-size: 1.8rem; }
-      .metrics { grid-template-columns: 1fr; }
+      h1 { font-size: 2.6rem; }
+      .section-title { font-size: 1.9rem; }
+      .services-grid { grid-template-columns: 1fr; }
       .pow-grid { grid-template-columns: 1fr; }
-      .cta-section { padding: 2rem; }
+      .metrics-bar { grid-template-columns: 1fr; }
+      .metric { border-bottom: 1px solid var(--border); border-right: none; }
+      .metric:last-child { border-bottom: none; }
+      .cta-section { padding: 2.5rem 1.5rem; }
+      .proof-section { padding: 2rem; }
+      .hero { padding: 5rem 0 3rem; }
+      .nav-links { gap: 1rem; }
     }
   </style>
 </head>
 <body>
-  <!-- Navigation -->
-  <div class="nav">
-    <div class="nav-content">
-      <a class="nav-brand" href="#home">
-        <i class="ti ti-shield-check"></i>TERMIREUM
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#home">
+      <i class="ti ti-terminal-2"></i>TERMIREUM
+    </a>
+    <div class="nav-links">
+      <a href="#services" class="nav-link" data-i18n="nav_services">Services</a>
+      <a href="#pow" class="nav-link" data-i18n="nav_pow">Write-ups</a>
+      <a href="#contact" class="nav-link" data-i18n="nav_contact">Contact</a>
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('id')">ID</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero" id="home">
+    <div class="hero-grid">
+      <div>
+        <div class="proof-banner">
+          <span class="dot"></span>
+          <span data-i18n="banner_text">Trusted by XLSmart (XL, Axis, Smartfren)</span>
+        </div>
+        <div class="hero-eyebrow" data-i18n="eyebrow">Penetration Tester · Security Researcher</div>
+        <h1 data-i18n="h1">Find the <span class="hl">Holes</span><br>Before They Do</h1>
+        <p class="hero-sub" data-i18n="hero_sub">
+          I help companies uncover critical vulnerabilities in their web applications, APIs, and infrastructure — before attackers get the chance. Backed by Rp141.000.000+ in verified bounty rewards across enterprise-scale targets.
+        </p>
+        <div class="hero-ctas">
+          <a href="#contact" class="btn btn-primary">
+            <i class="ti ti-mail"></i><span data-i18n="cta_hire">Let's Work Together</span>
+          </a>
+          <a href="#pow" class="btn btn-outline">
+            <i class="ti ti-book"></i><span data-i18n="cta_writeups">Read Write-ups</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Reward card -->
+      <div>
+        <div class="reward-card">
+          <div class="reward-label" data-i18n="card_label">Verified Bug Bounty Earnings</div>
+          <div class="reward-amount">Rp141.000.000</div>
+          <div class="reward-from" data-i18n="card_from">XLSmart Bug Bounty Program (RedStorm)</div>
+          <div class="reward-tags">
+            <span class="tag tag-critical">Critical ×6</span>
+            <span class="tag tag-high">High ×12</span>
+            <span class="tag tag-program">RedStorm Platform</span>
+          </div>
+          <hr class="reward-divider">
+          <p class="reward-note" data-i18n="card_note">
+            Target details are kept confidential to protect partner companies. All findings were responsibly disclosed and remediated.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics bar -->
+    <div class="metrics-bar">
+      <div class="metric">
+        <div class="metric-value">141M+</div>
+        <div class="metric-label" data-i18n="metric_reward">IDR Reward Earned</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">18+</div>
+        <div class="metric-label" data-i18n="metric_findings">Critical & High Findings</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">3</div>
+        <div class="metric-label" data-i18n="metric_programs">Enterprise Programs</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">100%</div>
+        <div class="metric-label" data-i18n="metric_disclosure">Responsible Disclosure</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOCIAL PROOF -->
+  <div class="section" id="proof">
+    <div class="proof-section">
+      <div class="section-eyebrow" data-i18n="proof_eyebrow">Track Record</div>
+      <p class="proof-quote" data-i18n="proof_quote">
+        I've helped <span class="hl">XLSmart</span> (formerly XL Axiata — operating XL, Axis, and Smartfren) identify and close vulnerabilities in their production infrastructure, earning over <span class="hl">Rp141.000.000</span> in verified bounty rewards across High and Critical severity findings.
+      </p>
+      <p style="font-size:0.88rem; color:var(--muted); max-width:680px; line-height:1.7;" data-i18n="proof_desc">
+        Findings include authentication bypasses, IDOR exposing sensitive B2B data, hardcoded credentials in production JS bundles, exposed monitoring dashboards, and misconfigured cloud storage. All disclosed responsibly through the official RedStorm bug bounty program.
+      </p>
+      <div class="proof-logos" style="margin-top:2rem;">
+        <span class="proof-logo">XL Axiata</span>
+        <span class="proof-logo">XLSmart</span>
+        <span class="proof-logo">Axis</span>
+        <span class="proof-logo">Smartfren</span>
+        <span class="proof-logo">RedStorm</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="section" id="services">
+    <div class="section-eyebrow" data-i18n="services_eyebrow">What I Do</div>
+    <h2 class="section-title" data-i18n="services_title">Security <span class="hl">Services</span></h2>
+    <p class="section-desc" data-i18n="services_desc">Focused on finding real, exploitable vulnerabilities — not checkbox compliance. I test the way attackers think.</p>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-world-www"></i></div>
+        <div class="service-title" data-i18n="svc1_title">Web App Penetration Testing</div>
+        <div class="service-desc" data-i18n="svc1_desc">In-depth manual testing of web applications: authentication flows, business logic, session management, XSS, SQLi, CSRF, and more. Beyond automated scanners.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-api"></i></div>
+        <div class="service-title" data-i18n="svc2_title">API Security Assessment</div>
+        <div class="service-desc" data-i18n="svc2_desc">REST and mobile API testing: BOLA/IDOR, broken auth, mass assignment, endpoint enumeration, and WAF bypass techniques.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-key"></i></div>
+        <div class="service-title" data-i18n="svc3_title">Auth & Access Control Testing</div>
+        <div class="service-desc" data-i18n="svc3_desc">2FA bypass, OTP rate-limiting, token manipulation, path normalization bypass, privilege escalation, and SSO misconfiguration.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-server"></i></div>
+        <div class="service-title" data-i18n="svc4_title">Infrastructure Exposure Review</div>
+        <div class="service-desc" data-i18n="svc4_desc">Identifying exposed admin panels, Spring Boot Actuator leaks, hardcoded secrets in JS bundles, misconfigured cloud storage (S3/Azure), and monitoring dashboards.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-device-mobile"></i></div>
+        <div class="service-title" data-i18n="svc5_title">Mobile & API Backend Testing</div>
+        <div class="service-desc" data-i18n="svc5_desc">APK reverse engineering, hardcoded credential extraction, Firebase/Google API key exposure, and backend API testing from mobile app traffic.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="ti ti-file-report"></i></div>
+        <div class="service-title" data-i18n="svc6_title">Detailed Vulnerability Reporting</div>
+        <div class="service-desc" data-i18n="svc6_desc">Clear, actionable reports with PoC, severity assessment (CVSS), business impact, and step-by-step remediation guidance your dev team can actually use.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROOF OF WORK / WRITEUPS -->
+  <div class="section" id="pow">
+    <div class="section-eyebrow" data-i18n="pow_eyebrow">Case Studies</div>
+    <h2 class="section-title" data-i18n="pow_title">Security <span class="hl">Write-ups</span></h2>
+    <p class="section-desc" data-i18n="pow_desc">Real findings from real assessments. Target identities and program names are redacted to protect partner confidentiality. Technical details are accurate.</p>
+
+    <div class="pow-filters">
+      <button class="filter-btn active" onclick="filterPOW('all', this)" data-i18n="filter_all">All</button>
+      <button class="filter-btn" onclick="filterPOW('critical', this)" data-i18n="filter_critical">Critical</button>
+      <button class="filter-btn" onclick="filterPOW('high', this)" data-i18n="filter_high">High</button>
+      <button class="filter-btn" onclick="filterPOW('auth', this)" data-i18n="filter_auth">Auth</button>
+      <button class="filter-btn" onclick="filterPOW('api', this)" data-i18n="filter_api">API</button>
+      <button class="filter-btn" onclick="filterPOW('infra', this)" data-i18n="filter_infra">Infrastructure</button>
+    </div>
+
+    <div class="pow-grid" id="powGrid"></div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section" id="contact">
+    <h2 data-i18n="cta_title">Ready to find your blind spots?</h2>
+    <p data-i18n="cta_desc">Whether you need a one-time pentest or ongoing security review, I'm available for engagement. Let's talk.</p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.5rem;">
+      <a href="mailto:termireum@gmail.com" class="btn btn-primary">
+        <i class="ti ti-mail"></i><span data-i18n="cta_email">Send Email</span>
       </a>
-      <div class="nav-links">
-        <a href="#pow" class="nav-link">Proof of Work</a>
-        <a href="#services" class="nav-link">Services</a>
-        <a href="#contact" class="nav-link">Contact</a>
-      </div>
+    </div>
+    <div class="social-links">
+      <a href="https://x.com/termireum" class="social-link" target="_blank" title="X / Twitter"><i class="ti ti-brand-x"></i></a>
+      <a href="https://github.com/termireum" class="social-link" target="_blank" title="GitHub"><i class="ti ti-brand-github"></i></a>
+      <a href="mailto:termireum@gmail.com" class="social-link" title="Email"><i class="ti ti-mail"></i></a>
     </div>
   </div>
 
+</div>
+
+<div class="footer">
   <div class="container">
-    <!-- Hero Section -->
-    <div class="hero" id="home">
-      <div class="hero-content">
-        <div class="hero-text">
-          <h1>Security Researcher & <span class="highlight">Red Team</span> Specialist</h1>
-          <p class="subtitle">Enterprise vulnerability assessment. Penetration testing. Critical infrastructure security. 140M+ IDR delivered in 6 months with 10+ critical findings.</p>
-          <div class="hero-ctas">
-            <a href="#contact" class="btn btn-primary">
-              <i class="ti ti-mail"></i>Hire Me
-            </a>
-            <a href="#pow" class="btn btn-secondary">
-              <i class="ti ti-search"></i>View Reports
-            </a>
-          </div>
-        </div>
-        <div class="hero-visual">
-          <div class="avatar-large">
-            <i class="ti ti-alert-triangle"></i>
-          </div>
-        </div>
-      </div>
-
-      <!-- Metrics -->
-      <div class="metrics">
-        <div class="metric">
-          <div class="metric-value">140M+</div>
-          <div class="metric-label">Total Rewards</div>
-        </div>
-        <div class="metric">
-          <div class="metric-value">10+</div>
-          <div class="metric-label">Critical Findings</div>
-        </div>
-        <div class="metric">
-          <div class="metric-value">100%</div>
-          <div class="metric-label">Success Rate</div>
-        </div>
-        <div class="metric">
-          <div class="metric-value">6mo</div>
-          <div class="metric-label">Active Researcher</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Proof of Work Section -->
-    <div class="section" id="pow">
-      <h2 class="section-title">Proof of <span class="highlight">Work</span></h2>
-      <p class="section-desc">Detailed vulnerability reports showcasing identified critical flaws in enterprise infrastructure. Each report includes severity assessment, technical details, and impact analysis.</p>
-      
-      <div class="pow-filters">
-        <button class="filter-btn active" onclick="filterPOW('all')">All Reports</button>
-        <button class="filter-btn" onclick="filterPOW('critical')">Critical Only</button>
-        <button class="filter-btn" onclick="filterPOW('high')">High Only</button>
-        <button class="filter-btn" onclick="filterPOW('auth')">Authentication</button>
-        <button class="filter-btn" onclick="filterPOW('api')">API</button>
-        <button class="filter-btn" onclick="filterPOW('infrastructure')">Infrastructure</button>
-      </div>
-      
-      <div class="pow-grid" id="powGrid">
-        <!-- Reports will be generated here -->
-      </div>
-    </div>
-
-    <!-- Services Section -->
-    <div class="section" id="services">
-      <h2 class="section-title">Services & <span class="highlight">Expertise</span></h2>
-      <p class="section-desc">Specialized in identifying critical vulnerabilities that impact your enterprise security posture.</p>
-      
-      <div class="services-grid">
-        <div class="service-card">
-          <div class="service-icon"><i class="ti ti-scan"></i></div>
-          <div class="service-title">Reconnaissance & Asset Discovery</div>
-          <div class="service-desc">Comprehensive infrastructure mapping, ASN enumeration, and external attack surface analysis using industry-leading tools.</div>
-        </div>
-        
-        <div class="service-card">
-          <div class="service-icon"><i class="ti ti-key"></i></div>
-          <div class="service-title">Authentication & Authorization Testing</div>
-          <div class="service-desc">Advanced testing for 2FA bypass, IDOR, path normalization, and access control vulnerabilities in enterprise systems.</div>
-        </div>
-        
-        <div class="service-card">
-          <div class="service-icon"><i class="ti ti-api"></i></div>
-          <div class="service-title">API Security Assessment</div>
-          <div class="service-desc">Deep dive into REST APIs, middleware bypass, Spring Boot exploitation, and endpoint security validation.</div>
-        </div>
-        
-        <div class="service-card">
-          <div class="service-icon"><i class="ti ti-code-off"></i></div>
-          <div class="service-title">Infrastructure Security Testing</div>
-          <div class="service-desc">Exposed monitoring dashboards, hardcoded credentials discovery, and sensitive configuration exposure remediation.</div>
-        </div>
-        
-        <div class="service-card">
-          <div class="service-icon"><i class="ti ti-layout"></i></div>
-          <div class="service-title">Web Application Security</div>
-          <div class="service-desc">XSS, CSRF, business logic flaws, and client-side exploitation testing with detailed impact analysis.</div>
-        </div>
-        
-        <div class="service-card">
-          <div class="service-icon"><i class="ti ti-bug"></i></div>
-          <div class="service-title">Vulnerability Management</div>
-          <div class="service-desc">End-to-end vulnerability reporting, severity assessment, and remediation guidance for your security team.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CTA Section -->
-    <div class="cta-section" id="contact">
-      <h2>Ready to secure your enterprise?</h2>
-      <p>Let's discuss your security challenges and how I can help identify critical vulnerabilities before they become incidents.</p>
-      <div class="social-links">
-        <a href="https://x.com/termireum" class="social-link" target="_blank" title="X/Twitter">
-          <i class="ti ti-brand-x"></i>
-        </a>
-        <a href="https://github.com/termireum" class="social-link" target="_blank" title="GitHub">
-          <i class="ti ti-brand-github"></i>
-        </a>
-        <a href="mailto:termireum@gmail.com" class="social-link" title="Email">
-          <i class="ti ti-mail"></i>
-        </a>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-      <p>Termireum © 2026 | Security Researcher | Penetration Testing | Enterprise Security</p>
-    </div>
+    <p>termireum © 2026 &nbsp;|&nbsp; Penetration Tester &nbsp;|&nbsp; Security Researcher &nbsp;|&nbsp; Indonesia</p>
   </div>
+</div>
 
-  <script>
-    const proofOfWork = [
-      {
-        id: "POW-001",
-        title: "Authentication Bypass via Path Normalization",
-        category: "auth",
-        severity: "critical",
-        description: "Semicolon injection in Spring Boot Actuator endpoints allowing authentication bypass and unauthorized access to administrative functions.",
-        target: "pms.xlsmart.co.id",
-        impact: "Unauthorized system access, credential exposure, service disruption"
-      },
-      {
-        id: "POW-002",
-        title: "IDOR - Corporate Invoice Enumeration",
-        category: "api",
-        severity: "critical",
-        description: "Object reference vulnerability exposing thousands of business invoices through sequential ID enumeration without proper authorization checks.",
-        target: "bizcare.xl.co.id",
-        impact: "Exposure of financial records, customer data, business intelligence"
-      },
-      {
-        id: "POW-003",
-        title: "2FA Authentication Bypass",
-        category: "auth",
-        severity: "critical",
-        description: "Two-factor authentication mechanism bypass through token manipulation and race condition exploitation.",
-        target: "bizcare.xl.co.id",
-        impact: "Unauthorized account takeover, privilege escalation, data breach"
-      },
-      {
-        id: "POW-004",
-        title: "Unauthenticated Monitoring Dashboard Access",
-        category: "infrastructure",
-        severity: "high",
-        description: "JavaMelody monitoring endpoints exposed on production systems without authentication, revealing infrastructure configuration and operational metrics.",
-        target: "idexpro.xl.co.id",
-        impact: "Infrastructure reconnaissance, sensitive data exposure, operational security risk"
-      },
-      {
-        id: "POW-005",
-        title: "Hardcoded API Credentials in JavaScript",
-        category: "infrastructure",
-        severity: "critical",
-        description: "Database credentials and API keys embedded in minified JavaScript bundles deployed to production web applications.",
-        target: "eload.smartfren.com",
-        impact: "Complete database access, API manipulation, lateral movement capability"
-      },
-      {
-        id: "POW-006",
-        title: "REST API Path Normalization Bypass",
-        category: "api",
-        severity: "high",
-        description: "Path normalization technique bypassing URL-based access controls, exposing administrative REST API endpoints to unauthenticated users.",
-        target: "api.lms.xlsmart.co.id",
-        impact: "Unauthorized API access, administrative function execution, data manipulation"
-      },
-      {
-        id: "POW-007",
-        title: "Stored XSS in User Profile Section",
-        category: "auth",
-        severity: "high",
-        description: "Stored cross-site scripting vulnerability allowing arbitrary JavaScript execution in victim user sessions with persistent payload storage.",
-        target: "anc.axis.co.id",
-        impact: "User credential theft, malware distribution, session hijacking"
-      },
-      {
-        id: "POW-008",
-        title: "Exposed Log Viewer Without Authentication",
-        category: "infrastructure",
-        severity: "high",
-        description: "Unauthenticated access to system logs revealing application errors, database queries, user activity, and sensitive operational information.",
-        target: "jupiter-mw.axis.co.id",
-        impact: "Intelligence gathering, vulnerability discovery aid, operational data exposure"
-      },
-      {
-        id: "POW-009",
-        title: "Base64 Sequential ID Enumeration",
-        category: "api",
-        severity: "high",
-        description: "Predictable Base64-encoded sequential IDs in order tracking system enabling unauthorized order data enumeration and access.",
-        target: "jupiter-mw-order.xl.co.id",
-        impact: "Order data exposure, customer information disclosure, business logic bypass"
-      },
-      {
-        id: "POW-010",
-        title: "Feature Flag & Bypass Config Exposure",
-        category: "infrastructure",
-        severity: "critical",
-        description: "Unauthenticated access to feature flag configuration endpoints allowing runtime feature manipulation and security bypass configuration.",
-        target: "xlcenter.xl.co.id",
-        impact: "Application behavior manipulation, feature enforcement bypass, security control circumvention"
-      }
-    ];
-
-    function renderPOW(filter = 'all') {
-      const grid = document.getElementById('powGrid');
-      grid.innerHTML = '';
-      
-      const filtered = filter === 'all' 
-        ? proofOfWork 
-        : proofOfWork.filter(pow => {
-            if (filter === 'critical') return pow.severity === 'critical';
-            if (filter === 'high') return pow.severity === 'high';
-            return pow.category === filter;
-          });
-      
-      filtered.forEach(pow => {
-        const card = document.createElement('div');
-        card.className = 'pow-card';
-        card.innerHTML = `
-          <div class="pow-header">
-            <div class="pow-id">${pow.id}</div>
-            <div class="severity-badge severity-${pow.severity}">${pow.severity}</div>
-          </div>
-          <div class="pow-title">${pow.title}</div>
-          <div class="pow-category">${pow.category.toUpperCase()}</div>
-          <div class="pow-desc">${pow.description}</div>
-          <div class="pow-meta">
-            <div class="pow-meta-item">
-              <i class="ti ti-target"></i>
-              <span>${pow.target}</span>
-            </div>
-            <div class="pow-meta-item">
-              <i class="ti ti-alert"></i>
-              <span>${pow.impact.substring(0, 25)}...</span>
-            </div>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
+<script>
+  /* ─── i18n ─────────────────────────────────── */
+  const i18n = {
+    en: {
+      nav_services: 'Services',
+      nav_pow: 'Write-ups',
+      nav_contact: 'Contact',
+      banner_text: 'Trusted by XLSmart (XL, Axis, Smartfren)',
+      eyebrow: 'Penetration Tester · Security Researcher',
+      h1: 'Find the <span class="hl">Holes</span><br>Before They Do',
+      hero_sub: 'I help companies uncover critical vulnerabilities in their web applications, APIs, and infrastructure — before attackers get the chance. Backed by Rp141.000.000+ in verified bounty rewards across enterprise-scale targets.',
+      cta_hire: "Let's Work Together",
+      cta_writeups: 'Read Write-ups',
+      card_label: 'Verified Bug Bounty Earnings',
+      card_from: 'XLSmart Bug Bounty Program (RedStorm)',
+      card_note: 'Target details are kept confidential to protect partner companies. All findings were responsibly disclosed and remediated.',
+      metric_reward: 'IDR Reward Earned',
+      metric_findings: 'Critical & High Findings',
+      metric_programs: 'Enterprise Programs',
+      metric_disclosure: 'Responsible Disclosure',
+      proof_eyebrow: 'Track Record',
+      proof_quote: 'I\'ve helped <span class="hl">XLSmart</span> (formerly XL Axiata — operating XL, Axis, and Smartfren) identify and close vulnerabilities in their production infrastructure, earning over <span class="hl">Rp141.000.000</span> in verified bounty rewards across High and Critical severity findings.',
+      proof_desc: 'Findings include authentication bypasses, IDOR exposing sensitive B2B data, hardcoded credentials in production JS bundles, exposed monitoring dashboards, and misconfigured cloud storage. All disclosed responsibly through the official RedStorm bug bounty program.',
+      services_eyebrow: 'What I Do',
+      services_title: 'Security <span class="hl">Services</span>',
+      services_desc: "Focused on finding real, exploitable vulnerabilities — not checkbox compliance. I test the way attackers think.",
+      svc1_title: 'Web App Penetration Testing',
+      svc1_desc: 'In-depth manual testing of web applications: authentication flows, business logic, session management, XSS, SQLi, CSRF, and more. Beyond automated scanners.',
+      svc2_title: 'API Security Assessment',
+      svc2_desc: 'REST and mobile API testing: BOLA/IDOR, broken auth, mass assignment, endpoint enumeration, and WAF bypass techniques.',
+      svc3_title: 'Auth & Access Control Testing',
+      svc3_desc: '2FA bypass, OTP rate-limiting, token manipulation, path normalization bypass, privilege escalation, and SSO misconfiguration.',
+      svc4_title: 'Infrastructure Exposure Review',
+      svc4_desc: 'Identifying exposed admin panels, Spring Boot Actuator leaks, hardcoded secrets in JS bundles, misconfigured cloud storage (S3/Azure), and monitoring dashboards.',
+      svc5_title: 'Mobile & API Backend Testing',
+      svc5_desc: 'APK reverse engineering, hardcoded credential extraction, Firebase/Google API key exposure, and backend API testing from mobile app traffic.',
+      svc6_title: 'Detailed Vulnerability Reporting',
+      svc6_desc: 'Clear, actionable reports with PoC, severity assessment (CVSS), business impact, and step-by-step remediation guidance your dev team can actually use.',
+      pow_eyebrow: 'Case Studies',
+      pow_title: 'Security <span class="hl">Write-ups</span>',
+      pow_desc: 'Real findings from real assessments. Target identities and program names are redacted to protect partner confidentiality. Technical details are accurate.',
+      filter_all: 'All',
+      filter_critical: 'Critical',
+      filter_high: 'High',
+      filter_auth: 'Auth',
+      filter_api: 'API',
+      filter_infra: 'Infrastructure',
+      cta_title: 'Ready to find your blind spots?',
+      cta_desc: "Whether you need a one-time pentest or ongoing security review, I'm available for engagement. Let's talk.",
+      cta_email: 'Send Email',
+      coming_soon: 'Coming soon',
+      read_more: 'Read write-up',
+    },
+    id: {
+      nav_services: 'Layanan',
+      nav_pow: 'Write-up',
+      nav_contact: 'Kontak',
+      banner_text: 'Dipercaya oleh XLSmart (XL, Axis, Smartfren)',
+      eyebrow: 'Penetration Tester · Security Researcher',
+      h1: 'Temukan <span class="hl">Celah</span><br>Sebelum Mereka',
+      hero_sub: 'Saya membantu perusahaan menemukan kerentanan kritis pada website, API, dan infrastruktur mereka — sebelum dimanfaatkan penyerang. Didukung dengan reward lebih dari Rp141.000.000 dari pengujian pada target enterprise.',
+      cta_hire: 'Hubungi Saya',
+      cta_writeups: 'Lihat Write-up',
+      card_label: 'Total Reward Bug Bounty Terverifikasi',
+      card_from: 'Program Bug Bounty XLSmart (RedStorm)',
+      card_note: 'Detail target dirahasiakan untuk melindungi privasi perusahaan mitra. Semua temuan dilaporkan secara responsible disclosure.',
+      metric_reward: 'Reward Diperoleh (IDR)',
+      metric_findings: 'Temuan Critical & High',
+      metric_programs: 'Program Enterprise',
+      metric_disclosure: 'Responsible Disclosure',
+      proof_eyebrow: 'Track Record',
+      proof_quote: 'Saya telah membantu <span class="hl">XLSmart</span> (dahulu XL Axiata — mengelola XL, Axis, dan Smartfren) menemukan dan menutup kerentanan di infrastruktur produksi mereka, dengan total reward lebih dari <span class="hl">Rp141.000.000</span> dari temuan High dan Critical.',
+      proof_desc: 'Temuan meliputi bypass autentikasi, IDOR yang mengekspos data B2B sensitif, kredensial hardcoded di JS bundle produksi, dashboard monitoring terbuka, dan misconfigurasi cloud storage. Semua dilaporkan melalui program resmi RedStorm.',
+      services_eyebrow: 'Apa yang Saya Lakukan',
+      services_title: '<span class="hl">Layanan</span> Keamanan',
+      services_desc: 'Fokus menemukan kerentanan nyata yang bisa dieksploitasi — bukan sekadar compliance checkbox. Saya menguji dengan cara berpikir seperti penyerang.',
+      svc1_title: 'Penetration Testing Web App',
+      svc1_desc: 'Pengujian manual mendalam pada aplikasi web: alur autentikasi, business logic, manajemen sesi, XSS, SQLi, CSRF, dan lainnya. Melampaui scanner otomatis.',
+      svc2_title: 'Penilaian Keamanan API',
+      svc2_desc: 'Pengujian REST dan mobile API: BOLA/IDOR, broken auth, mass assignment, enumerasi endpoint, dan teknik bypass WAF.',
+      svc3_title: 'Pengujian Auth & Access Control',
+      svc3_desc: 'Bypass 2FA, rate-limiting OTP, manipulasi token, bypass normalisasi path, privilege escalation, dan miskonfigurasi SSO.',
+      svc4_title: 'Review Paparan Infrastruktur',
+      svc4_desc: 'Identifikasi panel admin terbuka, kebocoran Spring Boot Actuator, secret hardcoded di JS bundle, misconfigurasi cloud storage (S3/Azure), dan dashboard monitoring.',
+      svc5_title: 'Pengujian Mobile & API Backend',
+      svc5_desc: 'Reverse engineering APK, ekstraksi kredensial hardcoded, paparan Firebase/Google API key, dan pengujian API backend dari traffic aplikasi mobile.',
+      svc6_title: 'Laporan Kerentanan Detail',
+      svc6_desc: 'Laporan yang jelas dan actionable dengan PoC, penilaian severity (CVSS), dampak bisnis, dan panduan remediasi langkah demi langkah untuk tim dev Anda.',
+      pow_eyebrow: 'Studi Kasus',
+      pow_title: '<span class="hl">Write-up</span> Keamanan',
+      pow_desc: 'Temuan nyata dari pengujian nyata. Identitas target dan nama program disamarkan untuk menjaga kerahasiaan mitra. Detail teknis akurat.',
+      filter_all: 'Semua',
+      filter_critical: 'Critical',
+      filter_high: 'High',
+      filter_auth: 'Auth',
+      filter_api: 'API',
+      filter_infra: 'Infrastruktur',
+      cta_title: 'Siap menemukan celah tersembunyi Anda?',
+      cta_desc: 'Apakah Anda butuh pentest sekali jalan atau review keamanan berkala, saya siap untuk berdiskusi.',
+      cta_email: 'Kirim Email',
+      coming_soon: 'Segera hadir',
+      read_more: 'Baca write-up',
     }
+  };
 
-    function filterPOW(filter) {
-      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      renderPOW(filter);
-    }
+  let currentLang = 'en';
 
-    renderPOW();
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth' });
-      });
+  function setLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent.toLowerCase() === lang);
     });
-  </script>
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (i18n[lang][key] !== undefined) el.innerHTML = i18n[lang][key];
+    });
+    renderPOW(currentFilter);
+  }
+
+  /* ─── POW DATA ─────────────────────────────── */
+  const pows = [
+    {
+      id: 'WU-001',
+      severity: 'critical',
+      cat: 'auth',
+      title_en: '2FA / MFA Bypass via Legacy Login Endpoint',
+      title_id: 'Bypass 2FA / MFA Melalui Endpoint Login Lama',
+      desc_en: 'Discovered two distinct login endpoints in a corporate B2B portal. One enforced OTP correctly; the other — a legacy endpoint — skipped OTP verification entirely, granting direct access to authenticated sessions.',
+      desc_id: 'Ditemukan dua endpoint login berbeda pada portal B2B korporat. Satu endpoint menerapkan OTP dengan benar; endpoint lama lainnya sepenuhnya melewati verifikasi OTP dan langsung mengizinkan akses sesi autentikasi.',
+      target: '[REDACTED]',
+      blog: null,
+    },
+    {
+      id: 'WU-002',
+      severity: 'critical',
+      cat: 'api',
+      title_en: 'BOLA — Mass B2B Invoice Enumeration',
+      title_id: 'BOLA — Enumerasi Massal Invoice B2B',
+      desc_en: 'Broken Object Level Authorization allowed unauthenticated sequential enumeration of thousands of corporate invoices, exposing financial records and customer metadata of enterprise clients.',
+      desc_id: 'Broken Object Level Authorization memungkinkan enumerasi sequential ribuan invoice korporat tanpa autentikasi, mengekspos data finansial dan metadata pelanggan enterprise.',
+      target: '[REDACTED]',
+      blog: null,
+    },
+    {
+      id: 'WU-003',
+      severity: 'critical',
+      cat: 'infra',
+      title_en: 'Default Credentials on Production BPM System',
+      title_id: 'Kredensial Default pada Sistem BPM Produksi',
+      desc_en: 'Camunda BPM workflow engine deployed to production with unchanged default credentials (demo:demo), exposing all internal process definitions, active workflows, and admin functions.',
+      desc_id: 'Workflow engine Camunda BPM di-deploy ke produksi dengan kredensial default tidak diubah (demo:demo), mengekspos semua definisi proses internal, alur aktif, dan fungsi admin.',
+      target: '[REDACTED]',
+      blog: null,
+    },
+    {
+      id: 'WU-004',
+      severity: 'critical',
+      cat: 'infra',
+      title_en: 'Hardcoded AES Key & Azure Credentials in JS Bundle',
+      title_id: 'AES Key & Kredensial Azure Hardcoded di JS Bundle',
+      desc_en: 'Production JavaScript bundle contained plaintext AES encryption keys and Azure cloud service credentials, enabling decryption of sensitive application data and unauthorized cloud resource access.',
+      desc_id: 'JS bundle produksi mengandung AES key dan kredensial Azure dalam plaintext, memungkinkan dekripsi data sensitif aplikasi dan akses resource cloud tanpa izin.',
+      target: '[REDACTED]',
+      blog: null,
+    },
+    {
+      id: 'WU-005',
+      severity: 'high',
+      cat: 'infra',
+      title_en: 'Unauthenticated JavaMelody Monitoring Dashboard',
+      title_id: 'Dashboard Monitoring JavaMelody Tanpa Autentikasi',
+      desc_en: 'JavaMelody performance monitoring endpoints exposed on production without authentication, leaking SQL query history, HTTP session data, heap usage, and infrastructure configuration details.',
+      desc_id: 'Endpoint monitoring JavaMelody terbuka di produksi tanpa autentikasi, membocorkan riwayat SQL query, data sesi HTTP, penggunaan heap, dan detail konfigurasi infrastruktur.',
+      target: '[REDACTED]',
+      blog: null,
+    },
+    {
+      id: 'WU-006',
+      severity: 'high',
+      cat: 'api',
+      title_en: 'Spring Boot Actuator Exposed via Semicolon Path Bypass',
+      title_id: 'Spring Boot Actuator Terbuka via Bypass Path Semicolon',
+      desc_en: 'Spring Security URL-pattern matching bypassed using semicolon path injection (e.g. /;/actuator/env), exposing environment variables, credentials, and internal service mappings.',
+      desc_id: 'Pencocokan URL-pattern Spring Security di-bypass menggunakan injeksi path semicolon (misalnya /;/actuator/env), mengekspos variabel lingkungan, kredensial, dan pemetaan layanan internal.',
+      target: '[REDACTED]',
+      blog: null,
+    },
+    {
+      id: 'WU-007',
+      severity: 'critical',
+      cat: 'api',
+      title_en: 'WhatsApp Business API — Arbitrary Message Sending',
+      title_id: 'WhatsApp Business API — Pengiriman Pesan Sembarangan',
+      desc_en: 'WABA endpoint misconfiguration allowed sending arbitrary WhatsApp messages to any global phone number on behalf of the enterprise account, with no rate limiting or recipient validation.',
+      desc_id: 'Miskonfigurasi endpoint WABA memungkinkan pengiriman pesan WhatsApp ke nomor mana pun secara global atas nama akun enterprise, tanpa rate limiting atau validasi penerima.',
+      target: '[REDACTED]',
+      blog: null,
+    },
+    {
+      id: 'WU-008',
+      severity: 'high',
+      cat: 'auth',
+      title_en: 'OTP Rate Limit Bypass — Account Enumeration',
+      title_id: 'Bypass Rate Limit OTP — Enumerasi Akun',
+      desc_en: 'OTP verification endpoint lacked proper rate limiting, allowing brute-force enumeration of registered accounts and potential OTP guessing attacks with no lockout mechanism.',
+      desc_id: 'Endpoint verifikasi OTP tidak memiliki rate limiting yang memadai, memungkinkan brute-force enumerasi akun terdaftar dan potensi serangan tebak OTP tanpa mekanisme lockout.',
+      target: '[REDACTED]',
+      blog: null,
+    },
+    {
+      id: 'WU-009',
+      severity: 'high',
+      cat: 'infra',
+      title_en: 'Stored XSS via SVG File Upload',
+      title_id: 'Stored XSS via Upload File SVG',
+      desc_en: 'File upload endpoint accepted SVG files containing embedded JavaScript. Stored payload executed in the context of any user viewing the uploaded file, enabling session hijacking and credential theft.',
+      desc_id: 'Endpoint upload file menerima SVG berisi JavaScript yang disematkan. Payload tersimpan dan dieksekusi dalam konteks setiap pengguna yang melihat file, memungkinkan session hijacking dan pencurian kredensial.',
+      target: '[REDACTED]',
+      blog: null,
+    },
+    {
+      id: 'WU-010',
+      severity: 'high',
+      cat: 'infra',
+      title_en: 'Feature Flag Config Endpoint — Security Bypass Exposure',
+      title_id: 'Endpoint Konfigurasi Feature Flag — Paparan Bypass Keamanan',
+      desc_en: 'Unauthenticated feature flag endpoint revealed runtime configuration including a BYPASS_CONFIGURATION flag set to true, exposing how security controls could be disabled at runtime.',
+      desc_id: 'Endpoint feature flag yang tidak terautentikasi mengungkap konfigurasi runtime termasuk flag BYPASS_CONFIGURATION yang bernilai true, mengekspos cara kontrol keamanan dapat dinonaktifkan.',
+      target: '[REDACTED]',
+      blog: null,
+    },
+  ];
+
+  let currentFilter = 'all';
+
+  function renderPOW(filter) {
+    currentFilter = filter;
+    const lang = currentLang;
+    const grid = document.getElementById('powGrid');
+    grid.innerHTML = '';
+
+    const filtered = filter === 'all' ? pows : pows.filter(p => {
+      if (filter === 'critical') return p.severity === 'critical';
+      if (filter === 'high') return p.severity === 'high';
+      return p.cat === filter;
+    });
+
+    filtered.forEach(p => {
+      const title = lang === 'id' ? p.title_id : p.title_en;
+      const desc  = lang === 'id' ? p.desc_id  : p.desc_en;
+      const cs    = i18n[lang].coming_soon;
+      const rm    = i18n[lang].read_more;
+      const catLabel = p.cat === 'infra' ? (lang === 'id' ? 'Infrastruktur' : 'Infrastructure') : p.cat.toUpperCase();
+
+      const el = document.createElement('div');
+      el.className = 'pow-card';
+      el.innerHTML = `
+        <div class="pow-header">
+          <span class="pow-id">${p.id}</span>
+          <span class="sev-badge sev-${p.severity}">${p.severity}</span>
+        </div>
+        <div class="pow-title">${title}</div>
+        <span class="pow-cat">${catLabel}</span>
+        <div class="pow-desc">${desc}</div>
+        <div class="pow-footer">
+          <div class="pow-target">
+            <i class="ti ti-target" style="font-size:0.85rem;"></i>
+            <span class="redacted" title="Confidential">████████████</span>
+          </div>
+          <div class="blog-badge ${p.blog ? '' : 'coming'}">
+            ${p.blog
+              ? `<i class="ti ti-external-link"></i><a href="${p.blog}" target="_blank" style="color:inherit;text-decoration:none;">${rm}</a>`
+              : `<i class="ti ti-clock"></i>${cs}`
+            }
+          </div>
+        </div>
+      `;
+      grid.appendChild(el);
+    });
+  }
+
+  function filterPOW(filter, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderPOW(filter);
+  }
+
+  renderPOW('all');
+</script>
 </body>
 </html>
